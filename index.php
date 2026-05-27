@@ -1,42 +1,57 @@
 <?php
 
-header("Access-Control-Allow-Origin: http://e-commerce.test");
-header("Access-Control-Allow-Methods: GET");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
-header("Content-Type: application/json");
+header('Content-Type: application/json; charset=UTF-8');
 
-$host = "localhost";
-$username = "root";
-$password = "";
-$dbname = "inventory_db";
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(204);
+  exit;
+}
 
-$dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
+spl_autoload_register(function ($class) {
+  $folders = [
+    'controllers',
+    'gateways',
+    'database'
+  ];
 
-try {
-  $pdo = new PDO($dsn, $username, $password);
+  foreach ($folders as $folder) {
+    $path = __DIR__ . "/$folder/$class.php";
 
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    if (file_exists($path)) {
+      require $path;
+      return;
+    }
+  }
+});
 
-  $sql = "SELECT * FROM products";
+$request = $_SERVER['REQUEST_URI'];
+$path = parse_url($request, PHP_URL_PATH);
+$parts = array_values(array_filter(explode('/', $path)));
 
-  $stmt = $pdo->prepare($sql);
+$database = new Database("localhost", "inventory_db", "root", "");
 
-  $stmt->execute();
+switch ($parts[0]) {
+  case 'products':
+    $productGateway = new ProductGateway($database);
+    $productController = new ProductController($productGateway);
+    $productController->processRequest($_SERVER['REQUEST_METHOD'], $parts[1] ?? null);
+    break;
 
-  $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  case 'orders':
+    break;
 
-  echo json_encode([
-    "success" => true,
-    "products" => $products
-  ]);
-} catch (PDOException $e) {
+  case 'profile':
+    break;
 
-  http_response_code(500);
+  case 'admin':
+    break;
 
-  echo json_encode([
-    "success" => false,
-    "message" => "Database error",
-    "error" => $e->getMessage()
-  ]);
+  default:
+    http_response_code(404);
+    echo json_encode(["error" => "Not Found"]);
+    break;
 }
