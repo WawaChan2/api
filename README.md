@@ -1,6 +1,6 @@
-# Project Setup Video Link
+# Project Setup Video Link (Updated)
 
-Click [here](https://youtu.be/B_tKSmP_ZsI?si=KA54-7taa-HrBqWQ) to learn how to set up the project.
+Click [here](https://youtu.be/KFLG79ANp3o) to learn how to set up the project.
 
 ## Database Schema Quick Guide
 
