@@ -35,7 +35,7 @@ $request = $_SERVER['REQUEST_URI'];
 $path = parse_url($request, PHP_URL_PATH);
 $parts = array_values(array_filter(explode('/', $path)));
 
-$database = new Database("localhost", "inventory_db", "root", "farah");
+$database = new Database("localhost", "inventory_db", "root", "");
 
 switch ($parts[0]) {
   case 'products':
