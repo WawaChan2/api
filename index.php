@@ -32,7 +32,7 @@ $request = $_SERVER['REQUEST_URI'];
 $path = parse_url($request, PHP_URL_PATH);
 $parts = array_values(array_filter(explode('/', $path)));
 
-$database = new Database("localhost", "inventory_db", "root", "");
+$database = new Database("localhost", "inventory_db", "root", "farah");
 
 switch ($parts[0]) {
   case 'products':
@@ -42,6 +42,9 @@ switch ($parts[0]) {
     break;
 
   case 'orders':
+    $orderGateway = new OrderGateway($database);
+    $orderController = new OrderController($orderGateway);
+    $orderController->processRequest($_SERVER['REQUEST METHOD'], $parts[1] ?? null);
     break;
 
   case 'profile':
