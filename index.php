@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
@@ -44,7 +47,7 @@ switch ($parts[0]) {
   case 'orders':
     $orderGateway = new OrderGateway($database);
     $orderController = new OrderController($orderGateway);
-    $orderController->processRequest($_SERVER['REQUEST METHOD'], $parts[1] ?? null);
+    $orderController->processRequest($_SERVER['REQUEST_METHOD'], $parts[1] ?? null);
     break;
 
   case 'profile':
